@@ -1,27 +1,24 @@
 
 // 必要なモジュールを読み込む
-const fs = require('fs');               // fs : ファイル入出力を扱う
-const archiver = require('archiver');   // アーカイブ生成用
+const fs = require('fs');               // fs : ファイルシステムモジュール
+const archiver = require('archiver');   // archiver: 圧縮するためのarchiverモジュール
 
-/*
- _dirname : 現在のディレクトリのパス
-*/
-//console.log(__dirname );
+// コンソール入力チェック
+const args = process.argv.length;
+if(args != 3){
+    console.log('コマンドの入力が不正です。');
+    console.log('Usage: npm run archive <出力ファイル名>');
+    process.exit(1);
+}
 
-const output = fs.createWriteStream(_dirname + '/example.zip');
-const archive = archiver('zip',{
-    zlib: {level: 9 }
-})
+const output = fs.createWriteStream(__dirname + '/' + process.argv[2] + '.zip');
+const archive = archiver('zip',{zlib: {level: 9 }})
 
+// 'close': ファイルストリームが閉じられたときに発生（圧縮完了） 
 output.on('close', function(){
-    
+    console.log('ファイルの圧縮が完了しました。');
 });
 
-output.on('end', function(){
-    
-});
-
-archive.pipe(output);   // 戻り値： 宛先ストリーム
-
-archive.globe('*.txt', {})
+archive.pipe(output);   // 読み込みストリームから書き込みストリームへ接続
+archive.glob('*.txt', {cwd: __dirname});    // グローブパターン（ファイルパス）に一致する複数ファイルを追加
 archive.finalize();     // ファイルを圧縮
