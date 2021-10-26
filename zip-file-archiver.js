@@ -1,13 +1,14 @@
 // 必要なモジュールを読み込む
 const fs = require("fs"); // fs : ファイルシステムモジュール
 const archiver = require("archiver"); // archiver: 圧縮するためのarchiverモジュール
-//const unzipper = require("unzipper");
+const unzipper = require("unzipper");
 
-class ZipFileArchiver {
+module.exports = class ZipFileArchiver {
   create(fileName, dirName) {
     try {
-      const output = fs.createWriteStream(`${__dirname}/${fileName}.zip`);
+      fs.statSync(`${__dirname}/${dirName}`);
 
+      const output = fs.createWriteStream(`${__dirname}/${fileName}.zip`);
       const archive = archiver("zip", { zlib: { level: 9 } });
 
       // 'close': ファイルストリームが閉じられたときに発生（圧縮完了）
@@ -19,12 +20,16 @@ class ZipFileArchiver {
       archive.glob("**", { cwd: dirName });
       archive.finalize(); // ファイルを圧縮
     } catch (e) {
-      console.log(e.message);
+      if (e.code === "ENOENT") {
+        console.log("指定のディレクトリが存在しません。");
+      } else {
+        console.log(e.message);
+      }
       process.exit(1);
     }
   }
-  /*
-  unzip(zipFileName,unzipFileName) {
+
+  unzip(unzipFileName, zipFileName) {
     try {
       // 指定のzipファイルが存在するかチェック
       fs.statSync(`${__dirname}/${zipFileName}.zip`);
@@ -37,13 +42,12 @@ class ZipFileArchiver {
         console.log("ファイルの解凍が完了しました。");
       });
     } catch (e) {
-      if(e.code === 'ENOENT'){
-        console.log("指定のzipファイルが存在しません。")
-      }else{
+      if (e.code === "ENOENT") {
+        console.log("指定のzipファイルが存在しません。");
+      } else {
         console.log(e.message);
       }
       process.exit(1);
     }
   }
-  */
-}
+};
