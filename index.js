@@ -1,13 +1,18 @@
+const FileNameFormatValidator = require("./file-name-format-validator.js");
+const ZipFileArchiver = require("./zip-file-archiver.js");
+
 // コンソール入力チェック
 const args = process.argv.length;
-if (args !== 4) {
+if (args !== 5) {
   console.log("コマンドの入力が不正です。");
-  console.log("Usage: npm run archive <出力ファイル名> <圧縮対象ファイル名>");
+  console.log(
+    "Usage: npm run archive <出力ファイル名> <圧縮対象ファイル名/圧縮ファイル> <圧縮(0)/解凍(1)>"
+  );
   process.exit(1);
 }
 
 // ファイル、ディレクトリの名前に指定できない文字が含まれていないかチェック
-const validator = new validateFormate();
+const validator = new FileNameFormatValidator();
 if (
   validator.validateNameFormat(process.argv[2]) ||
   validator.validateNameFormat(process.argv[3])
@@ -16,6 +21,12 @@ if (
   process.exit(1);
 }
 
-// ファイル圧縮を実行
-const file = new ZipFileArchiver();
-file.createArchive(process.argv[2], process.argv[3]);
+// ファイル圧縮、解凍を実行
+const archiver = new ZipFileArchiver();
+if (process.argv[4] === 0) {
+  archiver.create(process.argv[2], process.argv[3]);
+} else if (process.argv[4] === 0) {
+  archiver.unzip(process.argv[2], process.argv[3]);
+} else {
+  console.log("圧縮(0)/解凍(1)の指定が不正です。");
+}
