@@ -1,5 +1,5 @@
-const FileNameFormatValidator = require("./file-name-format-validator.js");
-const ZipFileArchiver = require("./zip-file-archiver.js");
+const FileNameFormatValidator = require("./file-name-format-validator");
+const ZipFileArchiver = require("./zip-file-archiver");
 
 (() => {
   // コンソール入力チェック
@@ -24,11 +24,15 @@ const ZipFileArchiver = require("./zip-file-archiver.js");
 
   // ファイル圧縮、解凍を実行
   const archiver = new ZipFileArchiver();
-  if (process.argv[4] === "0") {
-    archiver.create(process.argv[2], process.argv[3]);
-  } else if (process.argv[4] === "1") {
-    archiver.unzip(process.argv[2], process.argv[3]);
-  } else {
-    console.log("圧縮(0)/解凍(1)の指定が不正です。");
+  switch (process.argv[4]) {
+    case "0":
+      archiver.create(process.argv[2], process.argv[3]);
+      break;
+    case "1":
+      archiver.unzip(process.argv[2], process.argv[3]);
+      break;
+    default:
+      console.log("圧縮(0)/解凍(1)の指定が不正です。");
+      break;
   }
 })();

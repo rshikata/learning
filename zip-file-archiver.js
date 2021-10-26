@@ -26,7 +26,6 @@ module.exports = class ZipFileArchiver {
       } else {
         console.log(e.message);
       }
-      process.exit(1);
     }
   }
 
@@ -48,7 +47,6 @@ module.exports = class ZipFileArchiver {
       } else {
         console.log(e.message);
       }
-      process.exit(1);
     }
   }
 };
