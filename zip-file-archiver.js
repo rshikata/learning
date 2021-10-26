@@ -6,6 +6,7 @@ const unzipper = require("unzipper");
 module.exports = class ZipFileArchiver {
   create(fileName, dirName) {
     try {
+      // 圧縮対象のディレクトリが存在するかチェック
       fs.statSync(`${__dirname}/${dirName}`);
 
       const output = fs.createWriteStream(`${__dirname}/${fileName}.zip`);
@@ -37,7 +38,7 @@ module.exports = class ZipFileArchiver {
       const output = fs.createReadStream(`${__dirname}/${zipFileName}.zip`);
       output.pipe(unzipper.Extract({ path: `${__dirname}/${unzipFileName}/` }));
 
-      // 'close': ファイルストリームが閉じられたときに発生
+      // 'close': ファイルの展開が完了
       output.on("close", () => {
         console.log("ファイルの解凍が完了しました。");
       });
